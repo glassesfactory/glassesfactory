@@ -17,7 +17,6 @@ package net.glassesfactory.meganeloader
 	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 	import flash.events.ProgressEvent;
-	import flash.utils.Dictionary;
 	
 	import net.glassesfactory.namespaces.glassesfactory;
 	
@@ -26,7 +25,7 @@ package net.glassesfactory.meganeloader
 	/**
 	 * 複数のローダーをまとめて監視
 	 */
-	public class MeganeLoadObserver implements IEventDispatcher
+	public class MeganeLoadObserver extends EventDispatcher implements IEventDispatcher
 	{
 		/*/////////////////////////////////
 		* public variables
@@ -104,32 +103,6 @@ package net.glassesfactory.meganeloader
 		//Constractor
 		public function MeganeLoadObserver()
 		{
-			_dispatcher = new EventDispatcher();
-		}
-		
-		public function addEventListener( type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false ):void
-		{
-			_dispatcher.addEventListener( type, listener, useCapture, priority, useWeakReference );
-		}
-		
-		public function removeEventListener( type:String, listener:Function, useCapture:Boolean = false ):void
-		{
-			_dispatcher.removeEventListener( type, listener, useCapture );
-		}
-		
-		public function dispatchEvent( e:Event ):Boolean
-		{
-			return _dispatcher.dispatchEvent( e );
-		}
-		
-		public function hasEventListener( type:String ):Boolean
-		{
-			return _dispatcher.hasEventListener( type );
-		}
-		
-		public function willTrigger( type:String ):Boolean
-		{
-			return _dispatcher.willTrigger( type );
 		}
 		
 		/*/////////////////////////////////
@@ -149,6 +122,7 @@ package net.glassesfactory.meganeloader
 						_allTotalBytes += mLoader.totalByte;
 						mLoader.contentLoaderInfo.removeEventListener( e.type, arguments.callee );
 						mLoader.close();
+						preSerialLoad();
 					}
 				});
 				mLoader.load();
@@ -158,7 +132,6 @@ package net.glassesfactory.meganeloader
 				reset();
 				_serialLoad();
 			}
-			nextLoader();
 		}
 		
 		glassesfactory function _serialLoad():void
@@ -184,7 +157,7 @@ package net.glassesfactory.meganeloader
 			var l:int = _stack.length;
 			for( var i:int = 0; i < l; i++ )
 			{
-				_allLoadedBytes += _stack[ i ].loadedBytes;
+				_allLoadedBytes += _stack[ i ].loadedByte;
 			}
 			
 			dispatchEvent( new ProgressEvent ( ProgressEvent.PROGRESS, false, false, allLoadedByte, allTotalByte ));
@@ -200,12 +173,13 @@ package net.glassesfactory.meganeloader
 		
 		private function _observeComplete():void
 		{
+			_nowloading = false;
 			dispatchEvent( new Event( Event.COMPLETE ));
 		}
 		
 		glassesfactory function hasNext():Boolean
 		{
-			return _position++ < _stack.length;
+			return _position < _stack.length;
 		}
 		
 		glassesfactory function nextLoader():MeganeLoader

@@ -16,12 +16,13 @@ http://glasses-factory.net
  */
 package net.glassesfactory.meganeloader
 {
-	import flash.display.Bitmap;
 	import flash.display.BitmapData;
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.display.LoaderInfo;
+	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.EventDispatcher;
 	import flash.events.IEventDispatcher;
 	import flash.events.ProgressEvent;
 	import flash.net.URLRequest;
@@ -29,7 +30,6 @@ package net.glassesfactory.meganeloader
 	import flash.system.LoaderContext;
 	import flash.system.SecurityDomain;
 	import flash.utils.ByteArray;
-	import flash.utils.Dictionary;
 	
 	import net.glassesfactory.display.ILoader;
 	import net.glassesfactory.namespaces.glassesfactory;
@@ -38,7 +38,7 @@ package net.glassesfactory.meganeloader
 	
 	use namespace glassesfactory;
 	
-	public class MeganeLoader extends DisplayObject implements ILoader, IEventDispatcher
+	public class MeganeLoader extends EventDispatcher implements ILoader, IEventDispatcher
 	{
 		/*/////////////////////////////////
 		* public variables
@@ -63,6 +63,14 @@ package net.glassesfactory.meganeloader
 		public function get url():String
 		{
 			return _url;
+		}
+		
+		/**
+		 * ローダーコンテキスト
+		 */
+		public function get context():LoaderContext
+		{
+			return _context;
 		}
 		
 		/**
@@ -114,6 +122,11 @@ package net.glassesfactory.meganeloader
 			_id = value;
 		}
 		
+		public function set context( value:LoaderContext ):void
+		{
+			_context = value;
+		}
+		
 		/*/////////////////////////////////
 		* public methods
 		/*/////////////////////////////////
@@ -131,12 +144,13 @@ package net.glassesfactory.meganeloader
 		 * @param	req:URLRequest 読み込むURL
 		 * @param	context:ロード時のコンテキストを指定
 		 */ 
-		public function load( __url:String = null, context:LoaderContext = null ):void
+		public function load( __url:String = null, __context:LoaderContext = null ):void
 		{
 			if( __url != null ){ _url = __url; }
-			
-			var req:URLRequest = new URLRequest( __url );
-			_loader.load( req, context );
+			if( __context != null ){ _context = __context; }
+			var req:URLRequest = new URLRequest( _url );
+			_loader.contentLoaderInfo.addEventListener( Event.COMPLETE, _loadCompleteHandler );
+			_loader.load( req, _context );
 		}
 		
 		/**
@@ -185,22 +199,22 @@ package net.glassesfactory.meganeloader
 		
 		public override function addEventListener( type:String, listener:Function, useCapture:Boolean = false, priority:int = 0, useWeakReference:Boolean = false ):void
 		{
-			_loader.addEventListener( type, listener, useCapture, priority, useWeakReference );
+			_loader.contentLoaderInfo.addEventListener( type, listener, useCapture, priority, useWeakReference );
 		}
 		
 		public override function removeEventListener( type:String, listener:Function, useCapture:Boolean = false ):void
 		{
-			_loader.removeEventListener( type, listener, useCapture );
+			_loader.contentLoaderInfo.removeEventListener( type, listener, useCapture );
 		}
 		
 		public override function dispatchEvent( event:Event ):Boolean
 		{
-			return _loader.dispatchEvent( event );
+			return _loader.contentLoaderInfo.dispatchEvent( event );
 		}
 		
 		public override function hasEventListener( type:String ):Boolean
 		{
-			return _loader.hasEventListener( type );
+			return _loader.contentLoaderInfo.hasEventListener( type );
 		}
 		
 		public override function willTrigger( type:String ):Boolean
@@ -209,9 +223,11 @@ package net.glassesfactory.meganeloader
 		}
 		
 		//Constractor
-		public function MeganeLoader( url:String )
+		public function MeganeLoader( url:String, context:LoaderContext = null )
 		{
 			_loader = new Loader();
+			_url = url;
+			_context = context;
 		}
 		
 		
@@ -219,6 +235,12 @@ package net.glassesfactory.meganeloader
 		* private methods
 		/*/////////////////////////////////
 		
+		private function _loadCompleteHandler( e:Event ):void
+		{
+			_loader.contentLoaderInfo.removeEventListener( Event.COMPLETE, _loadCompleteHandler );
+			_isComplete = true;
+			return;
+		}
 		
 		/*/////////////////////////////////
 		* private variables
