@@ -138,6 +138,7 @@ package net.glassesfactory.ui
 			ExternalInterface.addCallback("getStatus", _getStatus);
 			ExternalInterface.addCallback( 'changeStatus', _changeStatus )
 			ExternalInterface.call( INIT_LIB, ExternalInterface.objectID );
+			_isReady = true;
 		}
 		
 		
@@ -189,14 +190,14 @@ package net.glassesfactory.ui
 			_bodyActive = Boolean( body );
 			if( Boolean(e) )
 			{
-				//Event.ACTIVATEが放出されつつ、ブラウザウィンドウが本当にアクティブであった場合イベントディスパッチ
+				//Event.ACTIVATEが排出されつつ、ブラウザウィンドウが本当にアクティブであった場合イベントディスパッチ
 				if( _isActive ){ _stage.dispatchEvent( new GFWindowEvent( GFWindowEvent.WINDOW_ACTIVE )); }
 				//IE対策
 				else if(!_bodyActive){ _stage.dispatchEvent( new GFWindowEvent( GFWindowEvent.WINDOW_DEACTIVE )); }
 			}
 			else
 			{
-				//Event.DEACTIVATEが放出されつつ、ブラウザウィンドウ自体も本当に非アクティブであった場合イベントディスパッチ
+				//Event.DEACTIVATEが排出されつつ、ブラウザウィンドウ自体も本当に非アクティブであった場合イベントディスパッチ
 				if(!_isActive ){ _stage.dispatchEvent( new GFWindowEvent( GFWindowEvent.WINDOW_DEACTIVE )); }
 			}
 		}
