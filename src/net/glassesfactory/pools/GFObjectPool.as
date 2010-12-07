@@ -148,7 +148,7 @@ package net.glassesfactory.pools
 		 */		
 		public function returnPool( obj:Object ):Boolean
 		{
-			var className:Class = obj["constractor"] as Class;
+			var className:Class = obj["constructor"] as Class;
 			var pool:Array = getPool( className );
 			
 			var hasObj:Boolean = false;
