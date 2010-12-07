@@ -11,7 +11,7 @@ http://glasses-factory.net
 
 /*////////////////////////////////////////////
 
-package glassesframe.pools
+package net.glassesfactory.pools
 {
 	import flash.utils.Dictionary;
 
