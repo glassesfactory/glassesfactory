@@ -250,7 +250,7 @@ package net.glassesfactory.display
 		public function addSwapFront(childA:DisplayObject, childB:DisplayObject):DisplayObject
 		{
 			if( !getChildIndex( childA )){ this.addChildren( childA, childB ); }
-			else{ this.addChildAt( childB, getChildIndex( childA ) + 1 ); } 
+			else{ _addChildAt( childB, getChildIndex( childA ) + 1 ); } 
 			return childB;
 		}
 		
@@ -267,7 +267,7 @@ package net.glassesfactory.display
 		public function addSwapBottom(childA:DisplayObject, childB:DisplayObject):DisplayObject
 		{
 			if( !getChildIndex( childA )){ this.addChildren( childB, childA ); }
-			else{ this.addChildAt( childB, ( getChildIndex( childA ) < 1 ) ? 0 : getChildIndex( childA ) - 1 ); }
+			else{ _addChildAt( childB, ( getChildIndex( childA ) < 1 ) ? 0 : getChildIndex( childA ) - 1 ); }
 			return childB;
 		}
 		
@@ -281,7 +281,7 @@ package net.glassesfactory.display
 		 */		
 		public function addFront( child:DisplayObject ):DisplayObject
 		{
-			return this.addChildAt( child, this.numChildren );
+			return _addChildAt( child, this.numChildren );
 		}
 		
 		
@@ -294,7 +294,7 @@ package net.glassesfactory.display
 		 */		
 		public function addBottom( child:DisplayObject ):DisplayObject
 		{
-			return this.addChildAt( child, 0 );
+			return _addChildAt( child, 0 );
 		}
 		
 		
@@ -370,7 +370,7 @@ package net.glassesfactory.display
 		 */		
 		public function removeFront():DisplayObject
 		{
-			return this.removeChildAt( this.numChildren );
+			return _removeChildAt( this.numChildren );
 		}
 		
 		
@@ -381,7 +381,7 @@ package net.glassesfactory.display
 		 */
 		public function removeBottom():DisplayObject
 		{
-			return this.removeChildAt( 0 );
+			return _removeChildAt( 0 );
 		}
 		
 		
