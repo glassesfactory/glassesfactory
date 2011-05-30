@@ -228,7 +228,7 @@ package net.glassesfactory.display
 		public function addChildren( ...args ):Array
 		{
 			var objs:Array = [];
-			args.map( function( child:DisplayObject ):*{ objs.push( this.addChild( child )); });
+			args.map( function( child:* ):*{ objs.push( addChild( child )); });
 			return objs;
 		}
 		
